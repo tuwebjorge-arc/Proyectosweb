@@ -4,19 +4,18 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/lib/config/site";
-import { Button } from "@/components/ui/Button";
-import { Container } from "@/components/ui/Container";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -25,7 +24,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Bloquear scroll de la página cuando el menú móvil está abierto
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -37,146 +35,115 @@ export function Header() {
     };
   }, [isMobileMenuOpen]);
 
+  const headerTheme = (isHome && !isScrolled) ? "dark" : "light";
 
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
         isScrolled
-          ? "bg-brand-cream/95 backdrop-blur-md py-3.5 border-b border-brand-border/60 shadow-xs"
-          : "bg-transparent py-5"
+          ? "bg-brand-ivory/95 backdrop-blur-md py-4 border-b border-brand-sand shadow-sm"
+          : "bg-transparent py-6"
       )}
     >
-      <Container size="wide">
+      <div className="max-w-7xl mx-auto px-6 md:px-8">
         <div className="flex items-center justify-between">
-          {/* Logo / Marca */}
           <Link
             href="/"
-            className="group flex flex-col focus-visible:outline-brand-wood"
+            className={cn(
+              "group flex flex-col focus-visible:outline-brand-wood transition-colors",
+              headerTheme === "dark" ? "text-white" : "text-brand-charcoal"
+            )}
             aria-label={`${siteConfig.name} - Inicio`}
           >
-            <span className="text-lg md:text-xl font-medium tracking-widest text-brand-charcoal uppercase group-hover:text-brand-wood transition-colors">
+            <span className="text-xl md:text-2xl font-serif tracking-wide group-hover:opacity-70 transition-opacity">
               AMW100
             </span>
-            <span className="text-[10px] md:text-[11px] tracking-[0.25em] text-brand-muted uppercase">
+            <span className="text-[10px] md:text-xs tracking-[0.3em] font-sans font-light uppercase opacity-80">
               CARPENTRY
             </span>
           </Link>
 
-          {/* Navegación Desktop */}
           <nav
-            className="hidden md:flex items-center space-x-8"
+            className="hidden md:flex items-center space-x-10"
             aria-label="Navegación principal"
           >
             {siteConfig.navigation.main.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
-
+              const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-xs uppercase tracking-widest transition-colors duration-200 relative py-1 focus-visible:outline-brand-wood",
-                    isActive
-                      ? "text-brand-wood font-semibold"
-                      : "text-brand-charcoal/80 hover:text-brand-wood"
+                    "text-xs uppercase tracking-widest transition-colors duration-300 relative py-2 font-medium",
+                    headerTheme === "dark"
+                      ? "text-white/80 hover:text-white"
+                      : "text-brand-charcoal/70 hover:text-brand-charcoal"
                   )}
                 >
                   {item.name}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-brand-wood animate-in fade-in" />
-                  )}
                 </Link>
               );
             })}
           </nav>
 
-          {/* Acciones Desktop */}
-          <div className="hidden md:flex items-center gap-4">
-            <Button
+          <div className="hidden md:flex items-center gap-6">
+            <Link
               href="/contacto"
-              variant="primary"
-              size="sm"
-              className="group gap-1.5"
+              className={cn(
+                "text-xs uppercase tracking-widest font-medium transition-colors duration-300 px-6 py-3 border",
+                headerTheme === "dark"
+                  ? "border-white/30 text-white hover:bg-white hover:text-brand-charcoal"
+                  : "border-brand-charcoal/20 text-brand-charcoal hover:bg-brand-charcoal hover:text-white"
+              )}
             >
-              <span>Solicitar presupuesto</span>
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Button>
+              Solicitar proyecto
+            </Link>
           </div>
 
-          {/* Botón Menú Móvil */}
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-brand-charcoal hover:text-brand-wood focus-visible:outline-brand-wood cursor-pointer"
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-menu"
-            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú de navegación"}
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
+            className={cn(
+              "md:hidden p-2 transition-colors",
+              headerTheme === "dark" ? "text-white" : "text-brand-charcoal"
             )}
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-      </Container>
+      </div>
 
-      {/* Menú Móvil Overlay */}
       {isMobileMenuOpen && (
-        <div
-          id="mobile-menu"
-          className="fixed inset-0 top-[60px] bg-brand-cream z-40 md:hidden flex flex-col justify-between p-6 border-t border-brand-border animate-in slide-in-from-top duration-300 overflow-y-auto"
-        >
-          <div className="space-y-6 pt-4">
-            <nav className="flex flex-col space-y-4" aria-label="Navegación móvil">
-              {siteConfig.navigation.main.map((item) => {
-                const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={cn(
-                      "text-2xl font-light tracking-wide py-2 border-b border-brand-border/40 transition-colors flex items-center justify-between",
-                      isActive
-                        ? "text-brand-wood font-normal"
-                        : "text-brand-charcoal hover:text-brand-wood"
-                    )}
-                  >
-                    <span>{item.name}</span>
-                    <ArrowUpRight className="w-4 h-4 opacity-50" />
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="pt-4">
-              <Button
-                href="/contacto"
-                variant="primary"
-                size="lg"
-                className="w-full justify-between"
+        <div className="fixed inset-0 top-[70px] bg-brand-charcoal z-40 md:hidden flex flex-col p-8 animate-in slide-in-from-top duration-300 overflow-y-auto">
+          <nav className="flex flex-col space-y-6 pt-10">
+            {siteConfig.navigation.main.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
+                className="text-3xl font-serif text-brand-ivory hover:text-brand-wood-light transition-colors"
               >
-                <span>Solicitar presupuesto</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+          
+          <div className="mt-auto pt-10 space-y-8">
+            <Link
+              href="/contacto"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="inline-block text-xs uppercase tracking-widest font-medium text-brand-charcoal bg-white px-8 py-4 w-full text-center"
+            >
+              Solicitar proyecto
+            </Link>
 
-          <div className="pt-8 pb-4 text-xs text-brand-muted border-t border-brand-border/50">
-            <p className="font-medium text-brand-charcoal uppercase tracking-wider mb-1">
-              AMW100 CARPENTRY
-            </p>
-            <p>{siteConfig.tagline}</p>
+            <div className="text-brand-ivory/50 text-sm font-light space-y-2">
+              <p>Marbella · Costa del Sol</p>
+              <p>+34 687 46 67 74</p>
+            </div>
           </div>
         </div>
       )}

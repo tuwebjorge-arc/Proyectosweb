@@ -15,7 +15,7 @@ export function WhatsAppButton() {
   // Limpiar caracteres no numéricos
   const cleanNumber = whatsappNumber.replace(/[^0-9]/g, "");
   const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(
-    "Hola, me pongo en contacto desde la web de AMW100 CARPENTRY para solicitar información sobre un proyecto."
+    "Hola, me gustaría solicitar información sobre un proyecto de carpintería o renovación de interiores."
   )}`;
 
   return (

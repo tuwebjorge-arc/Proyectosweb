@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { siteConfig, APP_URL } from "@/lib/config/site";
 import { Header } from "@/components/layout/Header";
@@ -12,27 +12,25 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: `${siteConfig.name} | Carpintería a Medida & Reformas de Calidad`,
+    default: `${siteConfig.name} | Carpintería a medida y renovación de interiores`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
   keywords: [
     "carpintería a medida",
-    "reformas de interiores",
-    "ebanistería",
-    "vestidores a medida",
-    "cocinas de diseño",
-    "muebles a medida",
-    "panelados de madera",
-    "reformas integrales",
+    "renovación de interiores",
+    "reformas marbella",
+    "cocinas a medida marbella",
+    "armarios a medida",
+    "interiorismo costa del sol",
     "AMW100 Carpentry",
   ],
   authors: [{ name: siteConfig.name }],
@@ -41,7 +39,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_ES",
     url: APP_URL,
-    title: `${siteConfig.name} | Carpintería a Medida & Reformas de Calidad`,
+    title: `${siteConfig.name} | Carpintería a medida y renovación de interiores`,
     description: siteConfig.description,
     siteName: siteConfig.name,
     images: [
@@ -55,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.name} | Carpintería a Medida & Reformas de Calidad`,
+    title: `${siteConfig.name} | Carpintería a medida y renovación de interiores`,
     description: siteConfig.description,
     images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop"],
   },
@@ -77,7 +75,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Schema.org JSON-LD estructurado
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
@@ -85,27 +82,23 @@ export default function RootLayout({
     description: siteConfig.description,
     url: APP_URL,
     ...(siteConfig.business.phone && { telephone: siteConfig.business.phone }),
-    ...(siteConfig.business.email && { email: siteConfig.business.email }),
-    ...(siteConfig.business.address && {
-      address: {
-        "@type": "PostalAddress",
-        streetAddress: siteConfig.business.address,
-        addressLocality: siteConfig.business.city,
-        postalCode: siteConfig.business.postalCode,
-        addressCountry: siteConfig.business.country || "ES",
-      },
-    }),
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: siteConfig.business.city,
+      addressRegion: siteConfig.business.region,
+      addressCountry: siteConfig.business.country || "ES",
+    },
   };
 
   return (
-    <html lang="es" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="es" className={`${geistSans.variable} ${playfair.variable} h-full antialiased`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal selection:bg-brand-wood selection:text-white">
+      <body className="min-h-full flex flex-col bg-brand-cream text-brand-charcoal selection:bg-brand-wood selection:text-white font-sans">
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />
