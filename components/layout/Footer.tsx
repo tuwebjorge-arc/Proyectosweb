@@ -1,7 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import { siteConfig } from "@/lib/config/site";
+import { useLang } from "@/lib/i18n/LanguageContext";
 
 export function Footer() {
+  const { t } = useLang();
+
+  const navItems = [
+    { name: t.nav.home, href: "/" },
+    { name: t.nav.services, href: "/servicios" },
+    { name: t.nav.about, href: "/sobre-nosotros" },
+    { name: t.nav.projects, href: "/proyectos" },
+    { name: t.nav.contact, href: "/contacto" },
+  ];
+
   return (
     <footer className="bg-brand-charcoal text-brand-ivory border-t border-white/10 pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-6 md:px-8">
@@ -12,46 +25,63 @@ export function Footer() {
               <span className="text-xs tracking-[0.3em] font-sans uppercase opacity-70">CARPENTRY</span>
             </Link>
             <p className="text-white/60 font-light max-w-sm leading-relaxed">
-              Carpintería a medida · Renovación de interiores
+              {t.footer.tagline}
               <br />
               {siteConfig.business.city} · {siteConfig.business.region}
             </p>
           </div>
-          
+
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40 mb-6">Navegación</h4>
+            <h4 className="text-xs uppercase tracking-widest text-white/40 mb-6">
+              {t.footer.navigation}
+            </h4>
             <ul className="space-y-4">
-              {siteConfig.navigation.main.map(item => (
+              {navItems.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-white/70 hover:text-white transition-colors text-sm font-light">
+                  <Link
+                    href={item.href}
+                    className="text-white/70 hover:text-white transition-colors text-sm font-light"
+                  >
                     {item.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="text-xs uppercase tracking-widest text-white/40 mb-6">Contacto</h4>
+            <h4 className="text-xs uppercase tracking-widest text-white/40 mb-6">
+              {t.footer.contactLabel}
+            </h4>
             <ul className="space-y-4 text-sm font-light text-white/70">
               <li>
-                <a href={`tel:${siteConfig.business.phone?.replace(/\s+/g, "")}`} className="hover:text-white transition-colors">
+                <a
+                  href={`tel:${siteConfig.business.phone?.replace(/\s+/g, "")}`}
+                  className="hover:text-white transition-colors"
+                >
                   {siteConfig.business.phone}
                 </a>
               </li>
               <li>
-                <a href={siteConfig.business.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                <a
+                  href={siteConfig.business.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
                   Instagram
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        
+
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-light text-white/40">
-          <p>© {new Date().getFullYear()} AMW100 CARPENTRY. Todos los derechos reservados.</p>
+          <p>
+            © {new Date().getFullYear()} AMW100 CARPENTRY. {t.footer.rights}
+          </p>
           <div className="flex space-x-6">
-            {siteConfig.navigation.legal.map(item => (
+            {t.footer.legal.map((item: { name: string; href: string }) => (
               <Link key={item.href} href={item.href} className="hover:text-white transition-colors">
                 {item.name}
               </Link>

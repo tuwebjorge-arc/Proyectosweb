@@ -3,20 +3,18 @@
 import React from "react";
 import { siteConfig } from "@/lib/config/site";
 import { MessageCircle } from "lucide-react";
+import { useLang } from "@/lib/i18n/LanguageContext";
 
 export function WhatsAppButton() {
+  const { t } = useLang();
   const whatsappNumber = siteConfig.business.whatsapp;
 
-  // Si no está configurado el número de WhatsApp, no renderizar
   if (!whatsappNumber) {
     return null;
   }
 
-  // Limpiar caracteres no numéricos
   const cleanNumber = whatsappNumber.replace(/[^0-9]/g, "");
-  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(
-    "Hola, me gustaría solicitar información sobre un proyecto de carpintería o renovación de interiores."
-  )}`;
+  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(t.whatsapp.message)}`;
 
   return (
     <a
@@ -24,7 +22,7 @@ export function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-40 flex items-center gap-2 bg-[#25D366] hover:bg-[#20BA5A] text-white px-4 py-3 shadow-lg hover:shadow-xl transition-all duration-300 focus-visible:outline-2 focus-visible:outline-[#25D366] focus-visible:outline-offset-2 group rounded-full"
-      aria-label="Contactar por WhatsApp con AMW100 Carpentry"
+      aria-label={t.whatsapp.ariaLabel}
     >
       <MessageCircle className="w-5 h-5 fill-current" />
       <span className="text-xs font-semibold tracking-wider uppercase hidden sm:inline-block">

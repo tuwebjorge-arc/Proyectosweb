@@ -6,12 +6,22 @@ import { usePathname } from "next/navigation";
 import { siteConfig } from "@/lib/config/site";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/i18n/LanguageContext";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const { t, lang, toggle } = useLang();
+
+  const navItems = [
+    { name: t.nav.home, href: "/" },
+    { name: t.nav.services, href: "/servicios" },
+    { name: t.nav.about, href: "/sobre-nosotros" },
+    { name: t.nav.projects, href: "/proyectos" },
+    { name: t.nav.contact, href: "/contacto" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +45,7 @@ export function Header() {
     };
   }, [isMobileMenuOpen]);
 
-  const headerTheme = (isHome && !isScrolled) ? "dark" : "light";
+  const headerTheme = isHome && !isScrolled ? "dark" : "light";
 
   return (
     <header
@@ -54,7 +64,7 @@ export function Header() {
               "group flex flex-col focus-visible:outline-brand-wood transition-colors",
               headerTheme === "dark" ? "text-white" : "text-brand-charcoal"
             )}
-            aria-label={`${siteConfig.name} - Inicio`}
+            aria-label={`${siteConfig.name} - Home`}
           >
             <span className="text-xl md:text-2xl font-serif tracking-wide group-hover:opacity-70 transition-opacity">
               AMW100
@@ -66,28 +76,40 @@ export function Header() {
 
           <nav
             className="hidden md:flex items-center space-x-10"
-            aria-label="Navegación principal"
+            aria-label="Main navigation"
           >
-            {siteConfig.navigation.main.map((item) => {
-              const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "text-xs uppercase tracking-widest transition-colors duration-300 relative py-2 font-medium",
-                    headerTheme === "dark"
-                      ? "text-white/80 hover:text-white"
-                      : "text-brand-charcoal/70 hover:text-brand-charcoal"
-                  )}
-                >
-                  {item.name}
-                </Link>
-              );
-            })}
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "text-xs uppercase tracking-widest transition-colors duration-300 relative py-2 font-medium",
+                  headerTheme === "dark"
+                    ? "text-white/80 hover:text-white"
+                    : "text-brand-charcoal/70 hover:text-brand-charcoal"
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-4">
+            {/* Language toggle */}
+            <button
+              type="button"
+              onClick={toggle}
+              aria-label={t.lang.switchLabel}
+              className={cn(
+                "text-xs uppercase tracking-widest font-medium transition-colors duration-300 px-3 py-1 border",
+                headerTheme === "dark"
+                  ? "border-white/30 text-white/80 hover:text-white hover:border-white"
+                  : "border-brand-charcoal/20 text-brand-charcoal/70 hover:text-brand-charcoal hover:border-brand-charcoal/40"
+              )}
+            >
+              {t.lang.switch}
+            </button>
+
             <Link
               href="/contacto"
               className={cn(
@@ -97,7 +119,7 @@ export function Header() {
                   : "border-brand-charcoal/20 text-brand-charcoal hover:bg-brand-charcoal hover:text-white"
               )}
             >
-              Solicitar proyecto
+              {t.nav.requestProject}
             </Link>
           </div>
 
@@ -109,7 +131,7 @@ export function Header() {
               headerTheme === "dark" ? "text-white" : "text-brand-charcoal"
             )}
             aria-expanded={isMobileMenuOpen}
-            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -119,7 +141,7 @@ export function Header() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 top-[70px] bg-brand-charcoal z-40 md:hidden flex flex-col p-8 animate-in slide-in-from-top duration-300 overflow-y-auto">
           <nav className="flex flex-col space-y-6 pt-10">
-            {siteConfig.navigation.main.map((item) => (
+            {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -130,18 +152,27 @@ export function Header() {
               </Link>
             ))}
           </nav>
-          
+
           <div className="mt-auto pt-10 space-y-8">
+            {/* Language toggle mobile */}
+            <button
+              type="button"
+              onClick={() => { toggle(); setIsMobileMenuOpen(false); }}
+              className="text-xs uppercase tracking-widest font-medium text-brand-ivory/70 hover:text-brand-ivory transition-colors"
+            >
+              {lang === "en" ? "Cambiar a Español" : "Switch to English"}
+            </button>
+
             <Link
               href="/contacto"
               onClick={() => setIsMobileMenuOpen(false)}
               className="inline-block text-xs uppercase tracking-widest font-medium text-brand-charcoal bg-white px-8 py-4 w-full text-center"
             >
-              Solicitar proyecto
+              {t.nav.requestProject}
             </Link>
 
             <div className="text-brand-ivory/50 text-sm font-light space-y-2">
-              <p>Marbella · Costa del Sol</p>
+              <p>{t.nav.location}</p>
               <p>+34 687 46 67 74</p>
             </div>
           </div>

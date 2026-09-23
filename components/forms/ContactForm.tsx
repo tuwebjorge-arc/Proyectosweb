@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { ContactFormData, ContactResponse } from "@/types";
-import { CheckCircle2, AlertCircle, Loader2, Send } from "lucide-react";
+import { ContactFormData } from "@/types";
+import { CheckCircle2, Loader2 } from "lucide-react";
+import { useLang } from "@/lib/i18n/LanguageContext";
 
 export function ContactForm() {
+  const { t } = useLang();
+  const f = t.form;
+
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
@@ -16,26 +19,25 @@ export function ContactForm() {
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [serverMessage, setServerMessage] = useState<string | null>(null);
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      errors.name = "Por favor, introduce tu nombre.";
+      errors.name = f.errors.name;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim() || !emailRegex.test(formData.email.trim())) {
-      errors.email = "Introduce una dirección de correo válida.";
+      errors.email = f.errors.email;
     }
 
     if (!formData.projectType) {
-      errors.projectType = "Selecciona el tipo de proyecto.";
+      errors.projectType = f.errors.projectType;
     }
 
     if (!formData.message.trim()) {
-      errors.message = "Por favor, describe tu proyecto.";
+      errors.message = f.errors.message;
     }
 
     setFieldErrors(errors);
@@ -62,7 +64,6 @@ export function ContactForm() {
     if (!validateForm()) return;
 
     setStatus("loading");
-    setServerMessage(null);
 
     // Simulate API call for presentation
     setTimeout(() => {
@@ -77,19 +78,15 @@ export function ContactForm() {
           <div className="inline-flex p-3 rounded-full bg-brand-wood/20 text-brand-wood">
             <CheckCircle2 className="w-12 h-12" />
           </div>
-          <h3 className="text-2xl font-serif text-white">
-            Mensaje enviado
-          </h3>
-          <p className="text-white/70 max-w-md mx-auto text-sm leading-relaxed">
-            Gracias por contactar con nosotros. Te responderemos lo antes posible.
-          </p>
+          <h3 className="text-2xl font-serif text-white">{f.successTitle}</h3>
+          <p className="text-white/70 max-w-md mx-auto text-sm leading-relaxed">{f.successBody}</p>
           <div className="pt-6">
             <button
               type="button"
               onClick={() => setStatus("idle")}
               className="px-6 py-3 border border-white/30 text-white hover:bg-white/10 transition-colors uppercase text-sm tracking-wider"
             >
-              Enviar otro mensaje
+              {f.sendAnother}
             </button>
           </div>
         </div>
@@ -98,7 +95,7 @@ export function ContactForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block text-xs uppercase tracking-widest text-white/70 mb-2">
-                Nombre
+                {f.nameLabel}
               </label>
               <input
                 type="text"
@@ -107,14 +104,14 @@ export function ContactForm() {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder:text-white/30 focus:border-white focus:outline-none transition-colors"
-                placeholder="Tu nombre"
+                placeholder={f.namePlaceholder}
               />
               {fieldErrors.name && <p className="text-xs text-red-400 mt-1">{fieldErrors.name}</p>}
             </div>
 
             <div>
               <label htmlFor="email" className="block text-xs uppercase tracking-widest text-white/70 mb-2">
-                Email
+                {f.emailLabel}
               </label>
               <input
                 type="email"
@@ -123,7 +120,7 @@ export function ContactForm() {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder:text-white/30 focus:border-white focus:outline-none transition-colors"
-                placeholder="tu@email.com"
+                placeholder="your@email.com"
               />
               {fieldErrors.email && <p className="text-xs text-red-400 mt-1">{fieldErrors.email}</p>}
             </div>
@@ -132,7 +129,7 @@ export function ContactForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label htmlFor="phone" className="block text-xs uppercase tracking-widest text-white/70 mb-2">
-                Teléfono
+                {f.phoneLabel}
               </label>
               <input
                 type="tel"
@@ -147,7 +144,7 @@ export function ContactForm() {
 
             <div>
               <label htmlFor="projectType" className="block text-xs uppercase tracking-widest text-white/70 mb-2">
-                Tipo de proyecto
+                {f.projectTypeLabel}
               </label>
               <select
                 id="projectType"
@@ -156,22 +153,24 @@ export function ContactForm() {
                 onChange={handleChange}
                 className="w-full bg-brand-black border-b border-white/20 py-3 text-white focus:border-white focus:outline-none transition-colors appearance-none"
               >
-                <option value="" disabled className="text-white/30">Selecciona una opción</option>
-                <option value="Cocina">Cocina</option>
-                <option value="Armarios / vestidor">Armarios / vestidor</option>
-                <option value="Carpintería a medida">Carpintería a medida</option>
-                <option value="Escaleras">Escaleras</option>
-                <option value="Baño">Baño</option>
-                <option value="Renovación integral">Renovación integral</option>
-                <option value="Otro">Otro</option>
+                <option value="" disabled className="text-white/30">
+                  {f.projectTypePlaceholder}
+                </option>
+                {f.projectTypes.map((type: string) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
               </select>
-              {fieldErrors.projectType && <p className="text-xs text-red-400 mt-1">{fieldErrors.projectType}</p>}
+              {fieldErrors.projectType && (
+                <p className="text-xs text-red-400 mt-1">{fieldErrors.projectType}</p>
+              )}
             </div>
           </div>
 
           <div>
             <label htmlFor="message" className="block text-xs uppercase tracking-widest text-white/70 mb-2">
-              Mensaje
+              {f.messageLabel}
             </label>
             <textarea
               id="message"
@@ -180,9 +179,11 @@ export function ContactForm() {
               value={formData.message}
               onChange={handleChange}
               className="w-full bg-transparent border-b border-white/20 py-3 text-white placeholder:text-white/30 focus:border-white focus:outline-none transition-colors resize-y"
-              placeholder="Detalles sobre tu proyecto..."
+              placeholder={f.messagePlaceholder}
             />
-            {fieldErrors.message && <p className="text-xs text-red-400 mt-1">{fieldErrors.message}</p>}
+            {fieldErrors.message && (
+              <p className="text-xs text-red-400 mt-1">{fieldErrors.message}</p>
+            )}
           </div>
 
           <div className="pt-6">
@@ -194,10 +195,10 @@ export function ContactForm() {
               {status === "loading" ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Enviando...</span>
+                  <span>{f.sending}</span>
                 </>
               ) : (
-                <span>Enviar consulta</span>
+                <span>{f.submit}</span>
               )}
             </button>
           </div>
