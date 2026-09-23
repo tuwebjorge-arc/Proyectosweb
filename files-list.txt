@@ -1,0 +1,4 @@
+﻿build-result.txt
+files-list.txt
+lint-result.txt
+typecheck-result.txt

@@ -1,0 +1,9 @@
+﻿https://proyectosweb.vercel.app/ => 200
+https://proyectosweb-one.vercel.app/ => 404
+https://proyectosweb-two.vercel.app/ => 404
+https://proyectosweb-1.vercel.app/ => 404
+https://proyectosweb-2.vercel.app/ => 404
+https://proyectosweb-3.vercel.app/ => 404
+https://amw100carpentry.vercel.app/ => 404
+https://amw100-carpentry.vercel.app/ => 404
+https://amw100.vercel.app/ => 404
