@@ -1,0 +1,16 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    - cron: '0 0 */2 * *' # Ejecutar cada 2 días a la medianoche UTC
+  workflow_dispatch: # Permitir ejecución manual
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          curl -s -X GET "https://imnkqwcyfitudcmgdaml.supabase.co/rest/v1/contact_requests?limit=1" \
+          -H "apikey: sb_publishable_Ud-oFpH2JEA0NF1L6Am2YQ_BBClOq5p" \
+          -H "Authorization: Bearer sb_publishable_Ud-oFpH2JEA0NF1L6Am2YQ_BBClOq5p"
