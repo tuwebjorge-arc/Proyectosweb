@@ -1,5 +1,0 @@
-﻿C:\Users\jorge\AppData\Local\com.vercel.cli => True
-C:\Users\jorge\.local\share\com.vercel.cli => False
-C:\Users\jorge\.vercel => False
-C:\Users\jorge\AppData\Roaming\com.vercel.cli => True
-LOCALAPPDATA contains: com.vercel.cli
